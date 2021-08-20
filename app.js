@@ -1,9 +1,9 @@
 const searchElm = document.getElementById('search');
 const listElm = document.getElementById('SearchList');
 const resultElm = document.querySelector(".searchResult");
+const frag = new DocumentFragment()
 
-let loadedCountries = [];
-let searchedCountries = [];
+const [loadedCountries, searchedCountries] = [[], []]
 
 const options = {
     isCaseSensitive: false,
@@ -50,9 +50,11 @@ const appendList = (results) => {
         const li = document.createElement("li");
         li.textContent = x["item"];
         // li.dataset.key = x["item"];
-        listElm.appendChild(li);
+        frag.appendChild(li)
+
     })
     resultElm.innerText = `about ${results.length} result matches`
+    listElm.appendChild(frag);
 }
 
 const getSearchResult = () => {
