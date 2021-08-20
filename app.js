@@ -3,6 +3,7 @@ const listElm = document.getElementById('SearchList');
 const resultElm = document.querySelector(".searchResult");
 
 let loadedCountries = [];
+let searchedCountries = [];
 
 const options = {
     isCaseSensitive: false,
@@ -32,19 +33,36 @@ const loadCountries = async () => {
     appendCountries(res);
 }
 
+const recordSearchResult = (key, results) => {
+    if (key !== "") {
+        if (hasRecordedResult(key)) return;
+        searchedCountries.push({
+            key: key,
+            values: results
+        })
+    }
+}
+const hasRecordedResult = (key) => searchedCountries.some(x => x.key === key);
+
 const appendList = (results) => {
     listElm.innerHTML = "";
     results.forEach(x => {
         const li = document.createElement("li");
         li.textContent = x["item"];
+        // li.dataset.key = x["item"];
         listElm.appendChild(li);
     })
     resultElm.innerText = `about ${results.length} result matches`
 }
 
 const getSearchResult = () => {
-    const items = Search(searchElm.value.trim());
-    const results = items.filter(x => x["score"] < 0.50)
+    if (!hasRecordedResult(searchElm.value.trim())) {
+        const items = Search(searchElm.value.trim());
+        const results = items.filter(x => x["score"] < 0.50)
+        appendList(results);
+        recordSearchResult(searchElm.value.trim(), results);
+    }
+    const results = searchedCountries.find(x => x.key === searchElm.value.trim()).values;
     appendList(results);
 }
 
