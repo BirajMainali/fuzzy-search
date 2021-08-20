@@ -35,7 +35,13 @@
     display: block;
 }
 
-s
 .searchResult {
     padding: 10px;
+}
+
+.top-section {
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 9348394839;
 }

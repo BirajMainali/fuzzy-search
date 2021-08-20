@@ -1,20 +1,22 @@
 const searchElm = document.getElementById('search');
 const listElm = document.getElementById('SearchList');
-const ResultElm = document.querySelector(".searchResult");
+const resultElm = document.querySelector(".searchResult");
 
-let LoadedCountries = [];
+let loadedCountries = [];
 
 const options = {
     isCaseSensitive: false,
     includeScore: true,
     shouldSort: true,
     minMatchCharLength: 1,
+    includeMatches: true,
+    ignoreLocation: false,
     threshold: 0.6,
     keys: ["name"]
 }
 
 const Search = (pattern) => {
-    const fuse = new Fuse(LoadedCountries, options);
+    const fuse = new Fuse(loadedCountries, options);
     return fuse.search(pattern);
 }
 
@@ -23,7 +25,7 @@ const getCountries = async () => {
 }
 
 const appendCountries = (countries) => {
-    countries.forEach(x => LoadedCountries.push(x["name"]));
+    countries.forEach(x => loadedCountries.push(x["name"]));
 }
 const loadCountries = async () => {
     const res = await getCountries();
@@ -37,15 +39,15 @@ const appendList = (results) => {
         li.textContent = x["item"];
         listElm.appendChild(li);
     })
-    ResultElm.innerText = `About (${results.length})  Result matches`
+    resultElm.innerText = `about ${results.length} result matches`
 }
 
 const getSearchResult = () => {
-    const results = Search(searchElm.value);
-    const items = results.filter(x => x["score"] < 0.50)
-    appendList(items);
-
+    const items = Search(searchElm.value.trim());
+    const results = items.filter(x => x["score"] < 0.50)
+    appendList(results);
 }
+
 const debounce = (func, delay) => {
     let timer;
     return function () {
@@ -59,7 +61,6 @@ const debounce = (func, delay) => {
 }
 
 const processData = debounce(getSearchResult, 500);
-
 
 window.addEventListener("DOMContentLoaded", async () => {
     await loadCountries();
