@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fuzzy Search</title>
+    <link rel="icon" href="favicon.png"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>Country Search : </h2>
+<input type="text" id="search" onkeyup="processData()" placeholder="Search ...">
+<code class="searchResult"></code>
+<hr>
+<ul id="SearchList">
+</ul>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
