@@ -3,7 +3,7 @@ const listElm = document.getElementById('SearchList');
 const resultElm = document.querySelector(".searchResult");
 const frag = new DocumentFragment()
 
-const [loadedCountries, searchedCountries] = [[], []]
+const [loadedCountries, cachedResult] = [[], []]
 
 const options = {
     isCaseSensitive: false,
@@ -33,40 +33,39 @@ const loadCountries = async () => {
     appendCountries(res);
 }
 
-const recordSearchResult = (key, results) => {
-    if (key !== "") {
-        if (hasRecordedResult(key)) return;
-        searchedCountries.push({
-            key: key,
-            values: results
-        })
-    }
-}
-const hasRecordedResult = (key) => searchedCountries.some(x => x.key === key);
-
 const appendList = (results) => {
     listElm.innerHTML = "";
     results.forEach(x => {
         const li = document.createElement("li");
         li.textContent = x["item"];
-        // li.dataset.key = x["item"];
+        li.dataset.key = x["item"];
         frag.appendChild(li)
-
     })
-    resultElm.innerText = `about ${results.length} result matches`
     listElm.appendChild(frag);
+    resultElm.innerText = `about ${results.length} result matches`
 }
 
 const getSearchResult = () => {
-    if (!hasRecordedResult(searchElm.value.trim())) {
+    if (!hasCacheResult(searchElm.value.trim())) {
         const items = Search(searchElm.value.trim());
         const results = items.filter(x => x["score"] < 0.50)
         appendList(results);
-        recordSearchResult(searchElm.value.trim(), results);
+        cacheSearchResult(searchElm.value.trim(), results);
     }
-    const results = searchedCountries.find(x => x.key === searchElm.value.trim()).values;
+    const results = cachedResult.find(x => x.key === searchElm.value.trim()).values;
     appendList(results);
 }
+
+const cacheSearchResult = (key, results) => {
+    if (key !== "") {
+        if (hasCacheResult(key)) return;
+        cachedResult.push({
+            key: key,
+            values: results
+        })
+    }
+}
+const hasCacheResult = (key) => cachedResult.some(x => x.key === key);
 
 const debounce = (func, delay) => {
     let timer;
