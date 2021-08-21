@@ -34,28 +34,45 @@ const loadCountries = async () => {
     appendCountries(res);
 }
 
-const appendList = (results) => {
-    listElm.innerHTML = "";
-    results.forEach(x => {
-        const li = document.createElement("li");
-        li.textContent = x["item"];
-        li.dataset.key = x["item"];
-        frag.appendChild(li)
-    })
+const renderList = (countries) => {
+    const childNodes = Array.from(listElm.childNodes);
+    const added = [];
+    const version = Math.random() * 100;
+    for (let i = 0; i < childNodes.length; i++) {
+        const key = childNodes[i].dataset.key;
+        if (!countries.some(x => x === key)) {
+            childNodes[i].remove();
+        } else {
+            added.push(key);
+        }
+    }
+    countries.forEach(x => {
+        if (!added.some(y => y === x)) {
+            const li = document.createElement("li");
+            li.textContent = x;
+            li.dataset.key = x;
+            li.dataset.version = version;
+            frag.appendChild(li);
+        }
+    });
     listElm.appendChild(frag);
-    resultElm.innerText = `about ${results.length} result matches`
+    resultElm.textContent = `about ${countries.length} result matches`
 }
 
 const getSearchResult = () => {
     if (!hasCacheResult(searchElm.value.trim())) {
         const items = Search(searchElm.value.trim());
         const results = items.filter(x => x["score"] < 0.50)
-        appendList(results);
+        const countries = results.map(x => x.item);
+        renderList(countries);
         cacheSearchResult(searchElm.value.trim(), results);
+    } else if (searchElm.value !== "") {
+        const results = cachedResult.find(x => x.key === searchElm.value.trim()).values;
+        const countries = results.map(x => x.item);
+        renderList(countries);
     }
-    const results = cachedResult.find(x => x.key === searchElm.value.trim()).values;
-    appendList(results);
 }
+
 
 const cacheSearchResult = (key, results) => {
     if (key !== "") {
@@ -87,10 +104,3 @@ window.addEventListener("DOMContentLoaded", async () => {
     searchElm.value = "";
     await loadCountries();
 })
-
-// const DOMCache = (elm, key) => {
-//     const node = elm.childNodes;
-//     for (let i = 0; i < node.length; i++) {
-//         if (node[i].dataset.key === key) return true;
-//     }
-// }
