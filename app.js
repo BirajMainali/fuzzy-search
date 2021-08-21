@@ -10,9 +10,10 @@ const options = {
     includeScore: true,
     shouldSort: true,
     minMatchCharLength: 1,
+    distance: 100,
+    findAllMatches: true,
     includeMatches: true,
-    ignoreLocation: false,
-    threshold: 0.6,
+    ignoreLocation: true,
     keys: ["name"]
 }
 
@@ -58,13 +59,21 @@ const getSearchResult = () => {
 
 const cacheSearchResult = (key, results) => {
     if (key !== "") {
-        if (hasCacheResult(key)) return;
+        if (hasCacheResult(key)) return -1;
         cachedResult.push({
             key: key,
             values: results
         })
     }
 }
+
+// const DOMCache = (elm, key) => {
+//     const node = elm.childNodes;
+//     for (let i = 0; i < node.length; i++) {
+//         if (node[i].dataset.key === key) return true;
+//     }
+// }
+
 const hasCacheResult = (key) => cachedResult.some(x => x.key === key);
 
 const debounce = (func, delay) => {
@@ -82,5 +91,6 @@ const debounce = (func, delay) => {
 const processData = debounce(getSearchResult, 500);
 
 window.addEventListener("DOMContentLoaded", async () => {
+    searchElm.value = "";
     await loadCountries();
 })
