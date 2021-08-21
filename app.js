@@ -67,13 +67,6 @@ const cacheSearchResult = (key, results) => {
     }
 }
 
-// const DOMCache = (elm, key) => {
-//     const node = elm.childNodes;
-//     for (let i = 0; i < node.length; i++) {
-//         if (node[i].dataset.key === key) return true;
-//     }
-// }
-
 const hasCacheResult = (key) => cachedResult.some(x => x.key === key);
 
 const debounce = (func, delay) => {
@@ -94,3 +87,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     searchElm.value = "";
     await loadCountries();
 })
+
+// const DOMCache = (elm, key) => {
+//     const node = elm.childNodes;
+//     for (let i = 0; i < node.length; i++) {
+//         if (node[i].dataset.key === key) return true;
+//     }
+// }
