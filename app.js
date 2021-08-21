@@ -60,15 +60,16 @@ const renderList = (countries) => {
 }
 
 const getSearchResult = () => {
+    let countries;
     if (!hasCacheResult(searchElm.value.trim())) {
         const items = Search(searchElm.value.trim());
         const results = items.filter(x => x["score"] < 0.50)
-        const countries = results.map(x => x.item);
+        countries = results.map(x => x.item);
         renderList(countries);
         cacheSearchResult(searchElm.value.trim(), results);
     } else if (searchElm.value !== "") {
         const results = cachedResult.find(x => x.key === searchElm.value.trim()).values;
-        const countries = results.map(x => x.item);
+        countries = results.map(x => x.item);
         renderList(countries);
     }
 }
