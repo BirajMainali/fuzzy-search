@@ -3,7 +3,7 @@ const listElm = document.getElementById('SearchList');
 const resultElm = document.querySelector(".searchResult");
 const frag = new DocumentFragment()
 
-let [loadedCountries, Cache, searchString] = [[], [], ""]
+let [LoadedCountries, Cache, SearchString] = [[], [], ""]
 
 const options = {
     isCaseSensitive: false,
@@ -17,46 +17,45 @@ const options = {
     keys: ["name"]
 }
 
-const Search = (pattern) => {
-    const fuse = new Fuse(loadedCountries, options);
-    return fuse.search(pattern);
-}
-
-const GETCountries = async () => {
+const getCountries = async () => {
     return await fetch("https://restcountries.eu/rest/v2/all").then(res => res.json());
 }
 
 const appendCountries = (countries) => {
-    countries.forEach(x => loadedCountries.push(x["name"]));
+    countries.forEach(x => LoadedCountries.push(x["name"]));
 }
 const loadCountries = async () => {
-    const res = await GETCountries();
+    const res = await getCountries();
     appendCountries(res);
 }
 
+const Search = (pattern) => {
+    const fuse = new Fuse(LoadedCountries, options);
+    return fuse.search(pattern);
+}
 
-const GETSearchResult = () => {
+const getSearchResult = () => {
     let countries;
-    if (!hasCached(searchString)) {
-        const items = Search(searchString);
+    if (!hasCached(SearchString)) {
+        const items = Search(SearchString);
         const results = items.filter(x => x["score"] < 0.50)
-        countries = MapCountries(results);
-        RenderCacheList(countries);
-        CacheResult(searchString, results);
-    } else if (searchString !== "") {
-        const results = GETCache();
-        countries = MapCountries(results);
-        RenderCacheList(countries);
+        countries = mapCountries(results);
+        renderCacheList(countries);
+        cacheResult(SearchString, results);
+    } else if (SearchString !== "") {
+        const results = getCache();
+        countries = mapCountries(results);
+        renderCacheList(countries);
     }
 }
 
-const MapCountries = (results) => results.map(x => x.item);
+const mapCountries = (results) => results.map(x => x.item);
 
-const GETCache = () => Cache.find(c => c.key === searchString).values;
+const getCache = () => Cache.find(c => c.key === SearchString).values;
 
 const hasCached = (key) => Cache.some(x => x.key === key);
 
-const CacheResult = (key, results) => {
+const cacheResult = (key, results) => {
     if (key !== "") {
         if (hasCached(key)) return -1;
         Cache.push({
@@ -66,7 +65,7 @@ const CacheResult = (key, results) => {
     }
 }
 
-const RenderCacheList = (countries) => {
+const renderCacheList = (countries) => {
     const childNodes = Array.from(listElm.childNodes);
     const added = [];
     const version = Math.random() * 100;
@@ -91,22 +90,22 @@ const RenderCacheList = (countries) => {
     resultElm.textContent = `about ${countries.length} result matches`
 }
 
-const debounce = (func, delay) => {
-    let timer;
+const Debounce = (func, delay) => {
+    let TIMER;
     return function () {
         let context = this,
             args = arguments;
-        clearTimeout(timer);
-        timer = setTimeout(() => {
+        clearTimeout(TIMER);
+        TIMER = setTimeout(() => {
             func.apply(context, args);
         }, delay);
     }
 }
 
-const processData = debounce(GETSearchResult, 500);
+const processData = Debounce(getSearchResult, 500);
 
 searchElm.onkeyup = e => {
-    searchString = e.target.value.trim();
+    SearchString = e.target.value.trim();
     processData();
 }
 
