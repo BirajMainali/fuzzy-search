@@ -1,6 +1,10 @@
-const searchElm = document.getElementById('search');
-const listElm = document.getElementById('SearchList');
-const resultElm = document.querySelector(".searchResult");
+const __ = (element) => {
+    return document.querySelector(element);
+}
+
+const searchElm = __('#search')
+const listElm = __('#SearchList');
+const resultElm = __('.searchResult');
 const frag = new DocumentFragment()
 
 let [LoadedCountries, Cache, SearchString] = [[], [], ""]
@@ -18,15 +22,12 @@ const options = {
 }
 
 const getCountries = async () => {
-    return await fetch("https://restcountries.eu/rest/v2/all").then(res => res.json());
+    const response = await fetch('https://restcountries.eu/rest/v2/all').then(response => response.json());
+    appendCountries(response);
 }
 
 const appendCountries = (countries) => {
     countries.forEach(x => LoadedCountries.push(x["name"]));
-}
-const loadCountries = async () => {
-    const res = await getCountries();
-    appendCountries(res);
 }
 
 const Search = (pattern) => {
@@ -110,5 +111,5 @@ searchElm.onkeyup = e => {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
-    await loadCountries();
+    await getCountries();
 })
