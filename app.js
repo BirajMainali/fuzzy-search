@@ -1,6 +1,5 @@
-const __ = (element) => {
-    return document.querySelector(element);
-}
+const __ = document.querySelector.bind(document);
+const __a = document.querySelectorAll.bind(document);
 
 const searchElm = __('#search')
 const listElm = __('#SearchList');
