@@ -22,7 +22,7 @@ const options = {
 
 const getCountries = async () => {
     const response = await fetch('https://restcountries.com/v3.1/all').then(response => response.json());
-    response.forEach(x => LoadedCountries.push(x["name"]));
+    response.forEach(x => LoadedCountries.push(x.name["common"]));
 }
 
 const Search = (pattern) => {
