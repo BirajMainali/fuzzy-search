@@ -21,12 +21,8 @@ const options = {
 }
 
 const getCountries = async () => {
-    const response = await fetch('https://restcountries.eu/rest/v2/all').then(response => response.json());
-    appendCountries(response);
-}
-
-const appendCountries = (countries) => {
-    countries.forEach(x => LoadedCountries.push(x["name"]));
+    const response = await fetch('https://restcountries.com/v3.1/all').then(response => response.json());
+    response.forEach(x => LoadedCountries.push(x["name"]));
 }
 
 const Search = (pattern) => {
