@@ -76,8 +76,7 @@ const renderCacheList = (countries) => {
     countries.forEach(x => {
         if (!added.some(y => y === x)) {
             const li = document.createElement("li");
-            li.textContent = x;
-            li.dataset.key = x;
+            [li.textContent, li.dataset.key] = [x, x];
             li.dataset.version = version;
             frag.appendChild(li);
         }
